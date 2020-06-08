@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package logpb;
+
+// protoc -I. --go_out=plugins=grpc:./ log.proto
+
+message LogContent {
+    bytes content = 1;
+}
+
+message LogResponse {
+    int64 size = 1;
+}
+
+message LogQuery {
+    string log_id = 1;
+    string date = 2;
+    int64 seek = 3;
+}
+
+message QueryResponse {
+    bytes content = 1;
+    int64 readPos = 2;
+    int64 remainBytes = 3;
+}
+
+service LogRPC {
+    rpc CollectionLog(stream LogContent) returns (LogResponse);
+    rpc QueryLog(LogQuery) returns (stream QueryResponse);
+}
