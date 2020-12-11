@@ -55,6 +55,7 @@ func (sws *serverWatchStream) close() {
 	sws.chunkWriter.Close()
 	close(sws.exitc)
 	sws.wg.Wait()
+	sws.chunkWriter = nil
 	sws.lg.Debug("write close", zap.String("log-id", sws.logID))
 }
 
@@ -75,12 +76,24 @@ func (sws *serverWatchStream) recvloop() error {
 			continue
 		}
 
-		err = sws.chunkWriter.Put(content.Content)
+		err = sws.writeContentToChunk(content)
 		if err != nil {
 			fmt.Println("sws.chunkWriter.Put: ", err)
 		}
 		sws.writeSize += n
 	}
+}
+
+func (sws *serverWatchStream) writeContentToChunk(content *pb.LogContent) error {
+	buf := bufferPoolGet()
+	defer bufferPoolPut(buf)
+
+	_, err := buf.Write(content.Content)
+	if err != nil {
+		return err
+	}
+
+	return sws.chunkWriter.Put(buf.Bytes())
 }
 
 func (sws *serverWatchStream) notifyReaders() {
