@@ -32,10 +32,10 @@ func NewServerConfig() *ServerConfig {
 	cfg := &ServerConfig{
 		Port:                 7809,
 		KeepAliveMinTime:     10,
-		WriteBufferSize:      20 * 1024 * 1024,
-		ReadBufferSize:       20 * 1024 * 1024,
-		MaxRecvMsgSize:       40 * 1024 * 1024,
-		MaxSendMsgSize:       40 * 1024 * 1024,
+		WriteBufferSize:      20 * 1024,
+		ReadBufferSize:       20 * 1024,
+		MaxRecvMsgSize:       40 * 1024,
+		MaxSendMsgSize:       40 * 1024,
 		MaxConcurrentStreams: math.MaxUint32,
 
 		LogDir:      "/tmp/logs/zaplog",
